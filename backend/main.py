@@ -82,6 +82,7 @@ def load_from_db_into_memory():
 
 def save_memory_to_db_if_dirty():
     global dirty
+
     db_lock.acquire()
     try:
         if not dirty:
@@ -89,13 +90,12 @@ def save_memory_to_db_if_dirty():
 
         snapshot = []
         for f in memory_db["fruits"]:
-            snapshot.append(f.name)
+            snapshot.append((f.name, f.weight))
 
         dirty = False
     finally:
         db_lock.release()
 
-    # write snapshot to DB without holding lock to make the program faster
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
@@ -107,7 +107,6 @@ def save_memory_to_db_if_dirty():
 
     conn.commit()
     conn.close()
-
 
 
 
