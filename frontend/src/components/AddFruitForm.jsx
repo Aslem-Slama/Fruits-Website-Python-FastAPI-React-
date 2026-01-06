@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const AddFruitForm = ({ addFruit, removeFruit }) => {
+const AddFruitForm = ({ addFruit, removeFruit, clearAll }) => {
   const [fruitName, setFruitName] = useState('');
   const [weightKg, setWeightKg] = useState('');
 
@@ -48,6 +48,7 @@ const handleSubmit = (event) => {
     <div className="buttons-row">
       <button type="submit">Add</button>
       <button type="button" onClick={handleRemove}>Remove</button>
+      <button type="button" onClick={clearAll}>Clear All</button>
     </div>
   </form>
 );
