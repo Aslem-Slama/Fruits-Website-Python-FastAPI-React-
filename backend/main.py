@@ -84,9 +84,9 @@ def save_memory_to_db_if_dirty():
         if not dirty:
             return
 
-        snapshot_names = []
+        snapshot = []
         for f in memory_db["fruits"]:
-            snapshot_names.append(f.name)
+            snapshot.append(f.name)
 
         dirty = False
     finally:
@@ -97,11 +97,14 @@ def save_memory_to_db_if_dirty():
     cur = conn.cursor()
 
     cur.execute("DELETE FROM fruits")
-    for name in snapshot_names:
-        cur.execute("INSERT INTO fruits (name) VALUES (?)", (name,))
+    for item in snapshot:
+        name = item[0]
+        weight = item[1]
+        cur.execute("INSERT INTO fruits (name, weight) VALUES (?, ?)", (name, weight))
 
     conn.commit()
     conn.close()
+
 
 
 
