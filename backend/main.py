@@ -125,6 +125,8 @@ def autosave_loop():
 
 
 
+
+
 # The FastAPI part
 
 @app.on_event("startup")
@@ -174,6 +176,24 @@ def add_fruit(fruit: Fruit):
         db_lock.release()
 
 
+@app.delete("/fruits", )
+def clear_all_fruits():
+    global dirty
+
+    db_lock.acquire()
+    try:
+        memory_db["fruits"] = []
+        dirty = True
+    finally:
+        db_lock.release()
+
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+    cur.execute("DELETE FROM fruits")
+    conn.commit()
+    conn.close()
+
+    return {"message": "All fruits cleared"}
 
 
 
@@ -209,7 +229,3 @@ def remove_fruit(fruit_name: str, weight: float = Query(...)):
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
-
-
-
