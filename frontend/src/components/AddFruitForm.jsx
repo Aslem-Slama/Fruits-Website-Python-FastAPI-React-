@@ -2,20 +2,23 @@ import React, { useState } from 'react';
 
 const AddFruitForm = ({ addFruit, removeFruit }) => {
   const [fruitName, setFruitName] = useState('');
+  const [weightKg, setWeightKg] = useState('');
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (fruitName) {
-      addFruit(fruitName);
+    if (fruitName && weightKg) {
+      addFruit(fruitName, weightKg);
       setFruitName('');
+      setWeightKg('');
     }
   };
 
 
   const handleRemove = () => {
-    if (fruitName) {
-      removeFruit(fruitName);
+    if (fruitName && weightKg) {
+      removeFruit(fruitName, weightKg);
       setFruitName('');
+      setWeightKg('')
     }
   };
 
@@ -27,9 +30,17 @@ const AddFruitForm = ({ addFruit, removeFruit }) => {
         onChange={(e) => setFruitName(e.target.value)}
         placeholder="Enter fruit name"
       />
-      <button type="submit">Add Fruit</button>
 
-      {}
+      <input
+        type="number"
+        value={weightKg}
+        onChange={(e) => setWeightKg(e.target.value)}
+        placeholder="Weight (kg)"
+        step="0.1"
+        min="0"
+      />
+
+      <button type="submit">Add Fruit</button>
       <button type="button" onClick={handleRemove}>Remove Fruit</button>
     </form>
   );

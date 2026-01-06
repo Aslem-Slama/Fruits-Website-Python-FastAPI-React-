@@ -40,3 +40,20 @@
 .read-the-docs {
   color: #888;
 }
+
+ul { list-style: none; padding-left: 0; }
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  width: 520px;
+  padding: 24px;
+  border-radius: 16px;
+  background: #1f1f1f;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
