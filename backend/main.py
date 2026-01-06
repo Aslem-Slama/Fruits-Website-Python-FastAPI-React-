@@ -142,7 +142,11 @@ def when_program_shuts_down():
 
 @app.get("/fruits", response_model=Fruits)
 def get_fruits():
-    return Fruits(fruits = memory_db.get("fruits"))
+    db_lock.acquire()
+    try:
+        return Fruits(fruits=memory_db["fruits"])
+    finally:
+        db_lock.release()
 
 
 
@@ -154,12 +158,22 @@ def add_fruit(fruit: Fruit):
     global dirty
     db_lock.acquire()
     try:
-        memory_db["fruits"].append(fruit)
+        fruits = memory_db["fruits"]
+
+        for f in fruits:
+            if f.name.lower() == fruit.name.lower():
+                f.weight = f.weight + fruit.weight
+                dirty = True
+                return f
+
+        fruits.append(fruit)
         dirty = True
+        return fruit
+
     finally:
         db_lock.release()
 
-    return fruit
+
 
 
 
