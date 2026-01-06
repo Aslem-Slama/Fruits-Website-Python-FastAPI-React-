@@ -137,10 +137,24 @@ def when_program_shuts_down():
 def get_fruits():
     return Fruits(fruits = memory_db.get("fruits"))
 
+
+
+
+
+
 @app.post("/fruits", response_model=Fruit)
 def add_fruit(fruit: Fruit):
-    memory_db["fruits"].append(fruit)
+    global dirty
+    db_lock.acquire()
+    try:
+        memory_db["fruits"].append(fruit)
+        dirty = True
+    finally:
+        db_lock.release()
+
     return fruit
+
+
 
 @app.delete("/fruits/{fruit_name}")
 def remove_fruit(fruit_name: str):
