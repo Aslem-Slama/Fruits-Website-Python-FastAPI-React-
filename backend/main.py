@@ -37,6 +37,24 @@ db_lock = threading.Lock()
 dirty = False # it is true if the memory has changed and it must be saved to the db
 stop_event = threading.Event(); #is used to stop the thread when the program shuts down
 
+#initialise the db
+def init_db():
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS fruits (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+
+
+
+
 
 
 
