@@ -23,12 +23,13 @@ const AddFruitForm = ({ addFruit, removeFruit }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+  <form onSubmit={handleSubmit} className="fruit-form">
+    <div className="inputs-row">
       <input
         type="text"
         value={fruitName}
         onChange={(e) => setFruitName(e.target.value)}
-        placeholder="Enter fruit name"
+        placeholder="Fruit name"
       />
 
       <input
@@ -39,11 +40,15 @@ const AddFruitForm = ({ addFruit, removeFruit }) => {
         step="0.1"
         min="0"
       />
+    </div>
 
-      <button type="submit">Add Fruit</button>
-      <button type="button" onClick={handleRemove}>Remove Fruit</button>
-    </form>
-  );
+    <div className="buttons-row">
+      <button type="submit">Add</button>
+      <button type="button" onClick={handleRemove}>Remove</button>
+    </div>
+  </form>
+);
+
 };
 
 export default AddFruitForm;

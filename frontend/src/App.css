@@ -57,3 +57,45 @@ ul { list-style: none; padding-left: 0; }
   background: #1f1f1f;
   box-shadow: 0 10px 30px rgba(0,0,0,0.35);
 }
+
+.fruit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.inputs-row {
+  display: flex;
+  gap: 12px;            /* space between the two inputs */
+  justify-content: center;
+}
+
+.inputs-row input {
+  width: 180px;
+  padding: 8px;
+}
+
+.buttons-row {
+  display: flex;
+  gap: 12px;            /* space between buttons */
+  justify-content: center;
+}
+
+.fruits-table {
+  margin-top: 18px;
+  width: 360px;
+  border-collapse: collapse;
+}
+
+.fruits-table th,
+.fruits-table td {
+  border: 1px solid #444;
+  padding: 10px;
+  text-align: left;
+}
+
+.fruits-table th {
+  font-weight: bold;
+}
+

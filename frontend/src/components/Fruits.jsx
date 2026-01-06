@@ -26,7 +26,6 @@ const FruitList = () => {
     }
   };
 
-
   const removeFruit = async (fruitName, weightKg) => {
     try {
       const w = Number(weightKg);
@@ -44,14 +43,24 @@ const FruitList = () => {
   return (
     <div>
       <h2>Fruits List</h2>
-      <ul>
-        {fruits.map((fruit, index) => (
-          <li key={index}>{fruit.name} {fruit.weight}Kg</li>
-        ))}
-      </ul>
-
-
       <AddFruitForm addFruit={addFruit} removeFruit={removeFruit} />
+
+      <table className="fruits-table">
+        <thead>
+          <tr>
+            <th>Fruit</th>
+            <th>Weight (kg)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {fruits.map((fruit, index) => (
+            <tr key={index}>
+              <td>{fruit.name}</td>
+              <td>{fruit.weight}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
