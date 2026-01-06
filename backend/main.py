@@ -12,6 +12,7 @@ import sqlite3
 
 class Fruit(BaseModel):
     name: str
+    weight: float
 
 class Fruits(BaseModel):
     fruits: List[Fruit]
@@ -45,7 +46,8 @@ def init_db():
     cur.execute("""
         CREATE TABLE IF NOT EXISTS fruits (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL
+            name TEXT NOT NULL,
+            weight REAL NOT NULL DEFAULT 0
         )
     """)
     conn.commit()
