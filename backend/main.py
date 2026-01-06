@@ -75,6 +75,43 @@ def load_from_db_into_memory():
 
 
 
+def save_memory_to_db_if_dirty():
+    global dirty
+    db_lock.acquire()
+    try:
+        if not dirty:
+            return
+
+        snapshot_names = []
+        for f in memory_db["fruits"]:
+            snapshot_names.append(f.name)
+
+        dirty = False
+    finally:
+        db_lock.release()
+
+    # write snapshot to DB without holding lock to make the program faster
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+
+    cur.execute("DELETE FROM fruits")
+    for name in snapshot_names:
+        cur.execute("INSERT INTO fruits (name) VALUES (?)", (name,))
+
+    conn.commit()
+    conn.close()
+
+
+
+
+
+
+def autosave_loop():
+    while not stop_event.is_set():
+        time.sleep(60)               # wait 60 seconds
+        save_memory_to_db_if_dirty()
+
+
 
 memory_db = {"fruits": []}
 
