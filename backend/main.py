@@ -34,4 +34,9 @@ memory_db = {"fruits": []}
 def get_fruits():
     return Fruits(fruits = memory_db.get("fruits"))
 
+@app.post("/fruits", response_model=Fruit)
+def add_fruit(fruit: Fruit):
+    memory_db["fruits"].append(fruit)
+    return fruit
+
 
