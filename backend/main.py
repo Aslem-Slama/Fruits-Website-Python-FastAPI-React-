@@ -4,6 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
 from fastapi import HTTPException
+import time
+import threading
+import sqlite3
 
 
 
@@ -27,6 +30,14 @@ app.add_middleware(
     allow_methods = ["*"],
     allow_headers = ["*"],
 )
+
+
+DB_PATH = "fruits.db"
+db_lock = threading.Lock()
+dirty = False # it is true if the memory has changed and it must be saved to the db
+stop_event = threading.Event(); #is used to stop the thread when the program shuts down
+
+
 
 
 
