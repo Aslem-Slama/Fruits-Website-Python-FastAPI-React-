@@ -32,6 +32,8 @@ app.add_middleware(
     allow_headers = ["*"],
 )
 
+memory_db = {"fruits": []}
+
 
 DB_PATH = "fruits.db"
 db_lock = threading.Lock()
@@ -118,7 +120,7 @@ def autosave_loop():
 
 
 
-memory_db = {"fruits": []}
+
 
 
 
