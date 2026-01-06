@@ -115,6 +115,24 @@ def autosave_loop():
 
 memory_db = {"fruits": []}
 
+
+
+
+# The FastAPI part
+
+@app.on_event("startup")
+def when_program_starts():
+    init_db()
+    load_from_db_into_memory()
+    threading.Thread(target=autosave_loop, daemon=True).start()
+
+@app.on_event("shutdown")
+def when_program_shuts_down():
+    stop_event.set()
+    save_memory_to_db_if_dirty()
+
+
+
 @app.get("/fruits", response_model=Fruits)
 def get_fruits():
     return Fruits(fruits = memory_db.get("fruits"))
