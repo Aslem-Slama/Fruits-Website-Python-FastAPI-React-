@@ -23,6 +23,16 @@ const FruitList = () => {
     }
   };
 
+
+  const removeFruit = async (fruitName) => {
+    try {
+      await api.delete(`/fruits/${encodeURIComponent(fruitName)}`);
+      fetchFruits(); // refresh list after removing
+    } catch (error) {
+      console.error("Error removing fruit", error);
+    }
+  };
+
   useEffect(() => {
     fetchFruits();
   }, []);
@@ -35,7 +45,9 @@ const FruitList = () => {
           <li key={index}>{fruit.name}</li>
         ))}
       </ul>
-      <AddFruitForm addFruit={addFruit} />
+
+
+      <AddFruitForm addFruit={addFruit} removeFruit={removeFruit} />
     </div>
   );
 };
