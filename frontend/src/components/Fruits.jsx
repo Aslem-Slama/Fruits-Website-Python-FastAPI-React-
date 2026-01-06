@@ -14,9 +14,12 @@ const FruitList = () => {
     }
   };
 
-  const addFruit = async (fruitName) => {
+  const addFruit = async (fruitName, weightKg) => {
     try {
-      await api.post('/fruits', { name: fruitName });
+      await api.post('/fruits', {
+        name: fruitName,
+        weight: Number(weightKg),
+      });
       fetchFruits();  // Refresh the list after adding a fruit
     } catch (error) {
       console.error("Error adding fruit", error);
@@ -24,9 +27,10 @@ const FruitList = () => {
   };
 
 
-  const removeFruit = async (fruitName) => {
+  const removeFruit = async (fruitName, weightKg) => {
     try {
-      await api.delete(`/fruits/${encodeURIComponent(fruitName)}`);
+      const w = Number(weightKg);
+      await api.delete(`/fruits/${encodeURIComponent(fruitName)}?weight=${encodeURIComponent(w)}`);
       fetchFruits(); // refresh list after removing
     } catch (error) {
       console.error("Error removing fruit", error);
@@ -42,7 +46,7 @@ const FruitList = () => {
       <h2>Fruits List</h2>
       <ul>
         {fruits.map((fruit, index) => (
-          <li key={index}>{fruit.name}</li>
+          <li key={index}>{fruit.name} {fruit.weight}Kg</li>
         ))}
       </ul>
 
