@@ -177,30 +177,34 @@ def add_fruit(fruit: Fruit):
 
 
 
-@app.delete("/fruits/{fruit_name}")
-def remove_fruit(fruit_name: str):
+@app.delete("/fruits/{fruit_name}", response_model= Fruit)
+def remove_fruit(fruit_name: str, weight: float = Query(...)):
     global dirty
-    db_lock.acquire()
 
+    db_lock.acquire()
     try:
         fruits = memory_db["fruits"]
 
-        fruit_to_remove = None
-
-        for fruit in fruits:
-            if fruit.name.lower() == fruit_name.lower():
-                fruit_to_remove = fruit
+        target = None
+        for f in fruits:
+            if f.name.lower() == fruit_name.lower():
+                target = f
                 break
 
-        if fruit_to_remove is None:
+        if target is None:
             raise HTTPException(status_code=404, detail="Fruit not found")
 
+        target.weight = target.weight - weight
+        dirty = True
 
-        fruits.remove(fruit_to_remove)
+        if target.weight <= 0:
+            fruits.remove(target)
+            return Fruit(name=target.name, weight=0)
 
-        return fruit_to_remove
+        return target
     finally:
         db_lock.release()
+
 
 
 if __name__ == "__main__":
