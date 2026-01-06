@@ -52,7 +52,24 @@ def init_db():
     conn.close()
 
 
+def load_from_db_into_memory():
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
 
+    cur.execute("SELECT name FROM fruits")
+    rows = cur.fetchall()
+
+    conn.close()
+
+    fruits_list = []
+    for row in rows:
+        fruits_list.append(Fruit(name=row[0]))
+
+    db_lock.acquire()
+    try:
+        memory_db["fruits"] = fruits_list
+    finally:
+        db_lock.release()
 
 
 
