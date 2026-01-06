@@ -3,6 +3,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
+from fastapi import HTTPException
+
 
 
 class Fruit(BaseModel):
@@ -38,6 +40,25 @@ def get_fruits():
 def add_fruit(fruit: Fruit):
     memory_db["fruits"].append(fruit)
     return fruit
+
+@app.delete("/fruits/{fruit_name}")
+def remove_fruit(fruit_name: str):
+    fruits = memory_db["fruits"]
+
+    fruit_to_remove = None
+
+    for fruit in fruits:
+        if fruit.name.lower() == fruit_name.lower():
+            fruit_to_remove = fruit
+            break
+
+    if fruit_to_remove is None:
+        raise HTTPException(status_code=404, detail="Fruit not found")
+
+
+    fruits.remove(fruit_to_remove)
+
+    return fruit_to_remove
 
 
 if __name__ == "__main__":
