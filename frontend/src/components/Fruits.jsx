@@ -36,6 +36,15 @@ const FruitList = () => {
     }
   };
 
+  const clearAll = async () => {
+    try {
+      await api.delete('/fruits');
+      fetchFruits();
+    } catch (error) {
+      console.error("Error clearing fruits", error);
+    }
+  };
+
   useEffect(() => {
     fetchFruits();
   }, []);
@@ -43,7 +52,7 @@ const FruitList = () => {
   return (
     <div>
       <h2>Fruits List</h2>
-      <AddFruitForm addFruit={addFruit} removeFruit={removeFruit} />
+      <AddFruitForm addFruit={addFruit} removeFruit={removeFruit} clearAll={clearAll} />
 
       <table className="fruits-table">
         <thead>
