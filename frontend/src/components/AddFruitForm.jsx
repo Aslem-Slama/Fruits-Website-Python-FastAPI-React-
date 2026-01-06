@@ -4,14 +4,17 @@ const AddFruitForm = ({ addFruit, removeFruit }) => {
   const [fruitName, setFruitName] = useState('');
   const [weightKg, setWeightKg] = useState('');
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    if (fruitName && weightKg) {
-      addFruit(fruitName, weightKg);
-      setFruitName('');
-      setWeightKg('');
-    }
-  };
+const handleSubmit = (event) => {
+  event.preventDefault();
+
+  const w = Number(weightKg);
+  if (fruitName && w > 0) {
+    addFruit(fruitName, w);
+    setFruitName('');
+    setWeightKg('');
+  }
+};
+
 
 
   const handleRemove = () => {
@@ -38,7 +41,7 @@ const AddFruitForm = ({ addFruit, removeFruit }) => {
         onChange={(e) => setWeightKg(e.target.value)}
         placeholder="Weight (kg)"
         step="0.1"
-        min="0"
+        min="0.1"
       />
     </div>
 
