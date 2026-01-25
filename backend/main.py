@@ -9,6 +9,9 @@ import threading
 import sqlite3
 from fastapi import Query
 from fastapi import Header
+import os
+from dotenv import load_dotenv
+from google import genai
 
 
 chat_histories = {}
@@ -232,6 +235,13 @@ def remove_fruit(fruit_name: str, weight: float = Query(...)):
         return target
     finally:
         db_lock.release()
+
+
+
+
+load_dotenv()
+gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+
 
 
 @app.post("/ai/chat", response_model=ChatResponse)
