@@ -8,8 +8,10 @@ import time
 import threading
 import sqlite3
 from fastapi import Query
+from fastapi import Header
 
 
+chat_histories = {}
 
 class ChatRequest(BaseModel):
     message: str
@@ -232,18 +234,29 @@ def remove_fruit(fruit_name: str, weight: float = Query(...)):
         db_lock.release()
 
 
-chat_history = []
+@app.post("/ai/chat", response_model=ChatResponse)
+def ai_chat(req: ChatRequest, x_session_id: str = Header(default="default")):
+    history = chat_histories.setdefault(x_session_id, [])
 
-@app.post("/ai/chat", response_model= ChatResponse)
-def ai_chat(req: ChatRequest):
-    chat_history.append({"role": "user", "content": req.message})
-    if req.message.strip() == "" and (len(chat_history) == 1):
+    if req.message.strip() == "":
+        if not history:
+            reply = "Hi! What do you want to prepare?\n- breakfast\n- lunch\n- dinner\n- special"
+            history.append({"role": "assistant", "content": reply})
+            return ChatResponse(reply=reply)
+
+        for m in reversed(history):
+            if m["role"] == "assistant":
+                return ChatResponse(reply=m["content"])
+
         reply = "Hi! What do you want to prepare?\n- breakfast\n- lunch\n- dinner\n- special"
-    else:
-        reply = "Not implemented yet!"
+        history.append({"role": "assistant", "content": reply})
+        return ChatResponse(reply=reply)
 
-    chat_history.append({"role": "assistant", "content": reply})
+    history.append({"role": "user", "content": req.message})
 
+    reply = "Not implemented yet!"
+
+    history.append({"role": "assistant", "content": reply})
     return ChatResponse(reply=reply)
 
 
