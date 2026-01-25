@@ -2,10 +2,12 @@ import React from 'react';
 import './App.css';
 import FruitList from './components/Fruits';
 import fruitsBg from "./assets/fruits_background.jpg";
+import Chat from "./Chat";
 
 
 const App = () => {
   return (
+      <>
     <div className="page">
       <div className="left">
         <div className="card">
@@ -32,6 +34,9 @@ const App = () => {
         </div>
       </div>
     </div>
+      <Chat />
+</>
+
   );
 };
 
