@@ -13,11 +13,9 @@ from fastapi import Query
 
 class ChatRequest(BaseModel):
     message: str
-    state: Optional[str] = None
 
 class ChatResponse(BaseModel):
     reply: str
-    state: str
 
 class Fruit(BaseModel):
     name: str
@@ -234,17 +232,19 @@ def remove_fruit(fruit_name: str, weight: float = Query(...)):
         db_lock.release()
 
 
+chat_history = []
 
 @app.post("/ai/chat", response_model= ChatResponse)
 def ai_chat(req: ChatRequest):
-    if req.state is None:
-        return ChatResponse(
-            reply=("Hi! What do you want to prepare?\n"
-                "- breakfast\n- lunch\n- dinner\n- special"), state="STEP_MEAL_TYPE"
-        )
+    chat_history.append({"role": "user", "content": req.message})
+    if req.message.strip() == "" and (len(chat_history) == 1):
+        reply = "Hi! What do you want to prepare?\n- breakfast\n- lunch\n- dinner\n- special"
     else:
-        return ChatResponse(reply="Not implemented yet!", state="None")
+        reply = "Not implemented yet!"
 
+    chat_history.append({"role": "assistant", "content": reply})
+
+    return ChatResponse(reply=reply)
 
 
 if __name__ == "__main__":

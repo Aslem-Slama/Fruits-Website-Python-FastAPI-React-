@@ -3,6 +3,12 @@ export default function Chat() {
   const [aiText, setAiText] = useState("");
   const [userText, setUserText] = useState("");
 
+  const sessionId =
+  sessionStorage.getItem("chat_session_id") ||
+  (sessionStorage.setItem("chat_session_id", crypto.randomUUID()),
+   sessionStorage.getItem("chat_session_id"));
+
+
   async function send() {
       const msg = userText.trim();
        if (!msg) return;
@@ -11,7 +17,8 @@ export default function Chat() {
 
       const res = await fetch("http://localhost:8000/ai/chat", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json",
+      "X-Session-Id": sessionId},
       body: JSON.stringify({ message: msg}),
     });
 
@@ -24,7 +31,8 @@ export default function Chat() {
   useEffect(() => {
   fetch("http://localhost:8000/ai/chat", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json",
+    "X-Session-Id": sessionId},
     body: JSON.stringify({ message: ""}),
   })
     .then((res) => res.json())
