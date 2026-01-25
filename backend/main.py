@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from fastapi import HTTPException
 import time
 import threading
@@ -10,6 +10,14 @@ import sqlite3
 from fastapi import Query
 
 
+
+class ChatRequest(BaseModel):
+    message: str
+    state: Optional[str] = None
+
+class ChatResponse(BaseModel):
+    reply: str
+    state: str
 
 class Fruit(BaseModel):
     name: str
@@ -224,6 +232,18 @@ def remove_fruit(fruit_name: str, weight: float = Query(...)):
         return target
     finally:
         db_lock.release()
+
+
+
+@app.post("/ai/chat", response_model= ChatResponse)
+def ai_chat(req: ChatRequest):
+    if req.state is None:
+        return ChatResponse(
+            reply=("Hi! What do you want to prepare?\n"
+                "- breakfast\n- lunch\n- dinner\n- special"), state="STEP_MEAL_TYPE"
+        )
+    else:
+        return ChatResponse(reply="Not implemented yet!", state="None")
 
 
 
