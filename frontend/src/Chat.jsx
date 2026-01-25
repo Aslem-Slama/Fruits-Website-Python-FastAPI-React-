@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 export default function Chat() {
   const [aiText, setAiText] = useState("");
   const [userText, setUserText] = useState("");
-  const [stateToken, setStateToken] = useState(null);
 
   async function send() {
       const msg = userText.trim();
@@ -13,12 +12,11 @@ export default function Chat() {
       const res = await fetch("http://localhost:8000/ai/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: msg, state: stateToken }),
+      body: JSON.stringify({ message: msg}),
     });
 
       const data = await res.json();
       setAiText(data.reply);
-      setStateToken(data.state);
 
   }
 
@@ -27,12 +25,11 @@ export default function Chat() {
   fetch("http://localhost:8000/ai/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: "", state: null }),
+    body: JSON.stringify({ message: ""}),
   })
     .then((res) => res.json())
     .then((data) => {
       setAiText(data.reply);
-      setStateToken(data.state);
     });
 }, []);
 
