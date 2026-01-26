@@ -25,6 +25,7 @@ export default function Chat() {
       const data = await res.json();
       setAiText(data.reply);
 
+      window.location.reload();
   }
 
 
