@@ -242,6 +242,14 @@ def remove_fruit(fruit_name: str, weight: float = Query(...)):
 load_dotenv()
 gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
+def gemini_reply(history):
+    prompt = "\n".join([f"{m['role']}: {m['content']}" for m in history[-20:]]) + "\nassistant:"
+    r = gemini_client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt
+    )
+    return r.text or ""
+
 
 
 @app.post("/ai/chat", response_model=ChatResponse)
@@ -264,7 +272,7 @@ def ai_chat(req: ChatRequest, x_session_id: str = Header(default="default")):
 
     history.append({"role": "user", "content": req.message})
 
-    reply = "Not implemented yet!"
+    reply = gemini_reply(history)
 
     history.append({"role": "assistant", "content": reply})
     return ChatResponse(reply=reply)
