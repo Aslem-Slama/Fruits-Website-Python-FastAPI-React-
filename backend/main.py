@@ -271,10 +271,18 @@ load_dotenv()
 gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def gemini_reply(history):
-    prompt = "\n".join([f"{m['role']}: {m['content']}" for m in history[-20:]]) + "\nassistant:"
+    full_conversation = COOKING_ASSISTANT_CONTEXT + "\n\n"
+
+    for message in history:
+        role = message['role']
+        content = message['content']
+        full_conversation += f"{role}: {content}\n"
+
+    full_conversation += "assistant:"
+
     r = gemini_client.models.generate_content(
         model="gemini-2.5-flash",
-        contents=prompt
+        contents=full_conversation
     )
     return r.text or ""
 
