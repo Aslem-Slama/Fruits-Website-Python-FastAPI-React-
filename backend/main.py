@@ -267,6 +267,33 @@ def deduct_ingredients(ingredient_list):
     finally:
         db_lock.release()
 
+
+def deduct_ingredients_safely(ingredient_list):
+    global dirty
+    db_lock.acquire()
+    try:
+        fruits = memory_db["fruits"]
+
+        for ingredient in ingredient_list:
+            name = ingredient["name"].lower()
+            amount_to_deduct = ingredient.get("amount", 0.1)
+
+            for f in fruits:
+                if f.name.lower() == name:
+                    actual_deduction = min(amount_to_deduct, f.weight)
+                    f.weight -= actual_deduction
+                    dirty = True
+
+                    if f.weight <= 0.01:
+                        fruits.remove(f)
+
+                    print(f"✓ Deducted {actual_deduction:.2f}kg of {f.name} (requested: {amount_to_deduct:.2f}kg)")
+                    break
+
+    finally:
+        db_lock.release()
+
+
 load_dotenv()
 gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
@@ -319,6 +346,45 @@ def ai_chat(req: ChatRequest, x_session_id: str = Header(default="default")):
     reply = gemini_reply(history)
 
     history.append({"role": "assistant", "content": reply})
+
+    if req.message.isdigit():
+        try:
+            choice_num = int(req.message)
+
+            for msg in reversed(history):
+                if msg['role'] == 'assistant' and '1:' in msg['content']:
+                    developer_history = history.copy()
+                    developer_history.append({
+                        "role": "user",
+                        "content": f"Developer: Extract ingredients from recipe {choice_num} as JSON array"
+                    })
+
+                    json_response = gemini_reply(developer_history)
+
+                    print(f"Developer response: {json_response}")  #################### DEBUG
+
+                    json_str = json_response.strip()
+                    if json_str.startswith("```"):
+                        lines = json_str.split("\n")
+                        json_str = "\n".join(lines[1:-1])
+
+                    start = json_str.find("[")
+                    end = json_str.rfind("]") + 1
+                    if start != -1 and end != 0:
+                        json_str = json_str[start:end]
+
+                    print(f"Cleaned JSON: {json_str}")  # DEBUG
+
+                    ingredients = json.loads(json_str)
+                    print(f"Parsed: {ingredients}")  # DEBUG
+
+                    deduct_ingredients_safely(ingredients)
+
+                    break
+
+        except Exception as e:
+            print(f"Error: {e}")
+
     return ChatResponse(reply=reply)
 
 
