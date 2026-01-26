@@ -12,7 +12,8 @@ from fastapi import Header
 import os
 from dotenv import load_dotenv
 from google import genai
-
+from ai_config import COOKING_ASSISTANT_CONTEXT
+import json
 
 chat_histories = {}
 
@@ -237,7 +238,15 @@ def remove_fruit(fruit_name: str, weight: float = Query(...)):
         db_lock.release()
 
 
-
+def get_refrigerator_contents():
+    db_lock.acquire()
+    try:
+        ingredients = []
+        for f in memory_db["fruits"]:
+            ingredients.append(f"{f.name}: {f.weight}kg")
+        return ingredients
+    finally:
+        db_lock.release()
 
 load_dotenv()
 gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
