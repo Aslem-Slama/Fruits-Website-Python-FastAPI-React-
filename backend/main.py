@@ -282,6 +282,7 @@ def deduct_ingredients_safely(ingredient_list):
                 if f.name.lower() == name:
                     actual_deduction = min(amount_to_deduct, f.weight)
                     f.weight -= actual_deduction
+                    f.weight = round(f.weight, 2)
                     dirty = True
 
                     if f.weight <= 0.01:

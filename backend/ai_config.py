@@ -76,7 +76,6 @@ IMPORTANT RULES:
 - Don't skip steps
 - Cooking instructions should be clear but concise (one paragraph only)
 
+When the user says Thank you or something similar at the end, talk with him and ask if he needs more help. Be polite.
 
-
-At the end of everything, tell the user to refresh the page to see the new amount of ingredients he has.
 """

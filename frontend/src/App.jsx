@@ -8,11 +8,12 @@ import Chat from "./Chat";
 const App = () => {
   return (
       <>
+        <Chat />
     <div className="page">
       <div className="left">
         <div className="card">
           <header className="header">
-            <h1>Fruit Management App</h1>
+            <h1>My smart Refrigerator!</h1>
           </header>
           <main>
             <FruitList />
@@ -28,13 +29,13 @@ const App = () => {
             alt="Fruits"
             />
           <div className="imageOverlay">
-            <h2>Track what you have</h2>
+            <h2>Track what you have!</h2>
             <p>Add and remove fruit weights in kg.</p>
+            <p>If you don't know what to cook, ask our assistant!</p>
           </div>
         </div>
       </div>
     </div>
-      <Chat />
 </>
 
   );
