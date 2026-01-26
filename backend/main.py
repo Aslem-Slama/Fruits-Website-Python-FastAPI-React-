@@ -248,6 +248,25 @@ def get_refrigerator_contents():
     finally:
         db_lock.release()
 
+def deduct_ingredients(ingredient_list):
+    global dirty
+    db_lock.acquire()
+    try:
+        fruits = memory_db["fruits"]
+        for ingredient in ingredient_list:
+            name = ingredient["name"].lower()
+            weight_to_remove = ingredient["weight"]
+
+            for f in fruits:
+                if f.name.lower() == name:
+                    f.weight -= weight_to_remove
+                    dirty = True
+                    if f.weight <= 0:
+                        fruits.remove(f)
+                    break
+    finally:
+        db_lock.release()
+
 load_dotenv()
 gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
