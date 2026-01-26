@@ -273,6 +273,12 @@ gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 def gemini_reply(history):
     full_conversation = COOKING_ASSISTANT_CONTEXT + "\n\n"
 
+    if get_refrigerator_contents() is not None:
+        full_conversation += "AVAILABLE INGREDIENTS IN REFRIGERATOR:\n"
+        for ingredient in get_refrigerator_contents():
+            full_conversation += f"- {ingredient}\n"
+        full_conversation += "\n"
+
     for message in history:
         role = message['role']
         content = message['content']
@@ -280,12 +286,14 @@ def gemini_reply(history):
 
     full_conversation += "assistant:"
 
-    r = gemini_client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=full_conversation
-    )
-    return r.text or ""
-
+    try:
+        r = gemini_client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=full_conversation
+        )
+        return r.text or ""
+    except Exception as e:
+        return "Sorry, I've reached my API limit. Try again in a minute. 😅"
 
 
 @app.post("/ai/chat", response_model=ChatResponse)
